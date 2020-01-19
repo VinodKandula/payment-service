@@ -2,11 +2,11 @@
 Transferring money from one account to another account
 
 ## Build
-####Build & Unit Tests
+#### Build & Unit Tests
 ```
 gradle build
 ```
-####Running Integration Tests
+#### Running Integration Tests
 ```
 gradle run
 ```
