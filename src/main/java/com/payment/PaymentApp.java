@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.payment.api.AccountControler;
 import com.payment.api.FundsTransferController;
 import com.payment.dto.ErrorDto;
+import com.payment.exception.AccountNoFoundException;
+import com.payment.exception.InsufficientBalanceException;
 import com.payment.model.Account;
 import com.payment.service.AccountRepository;
 import com.payment.service.FundsTransferService;
@@ -60,9 +62,18 @@ public class PaymentApp {
 
         exception(Exception.class, (e, request, response) -> {
             response.header("Content-Type", "application/json");
-            response.status(e instanceof IllegalArgumentException ? 400 : 500);
+            int errorCode;
+            String errorMessage;
+            if (e instanceof IllegalArgumentException || e instanceof AccountNoFoundException || e instanceof InsufficientBalanceException) {
+                errorCode = 400;
+                errorMessage = e.getMessage();
+            } else {
+                errorCode = 500;
+                errorMessage = "Internal server error";
+            }
+            response.status(errorCode);
             response.body(gson.toJson(
-                    new ErrorDto(e instanceof IllegalArgumentException ? e.getMessage() : "Internal server error")
+                    new ErrorDto(errorMessage)
             ));
         });
     }
